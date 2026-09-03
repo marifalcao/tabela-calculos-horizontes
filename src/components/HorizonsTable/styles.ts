@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import green from '@material-ui/core/colors/green';
 
 export const ITEM_WIDTH = 250;
 export const YEAR_WIDTH = 125;
@@ -8,10 +9,8 @@ export default makeStyles(theme => ({
     width: '100%',
     minWidth: 0,
     boxSizing: 'border-box',
-    border: '1px solid #dfe5ec',
-    borderTop: '3px solid ' + theme.palette.primary.main,
-    borderRadius: 12,
-    backgroundColor: '#fff',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.background.paper,
     fontFamily: theme.typography.fontFamily,
     overflow: 'hidden',
   },
@@ -19,7 +18,6 @@ export default makeStyles(theme => ({
   title: {
     fontFamily: 'inherit',
     fontWeight: 600,
-    letterSpacing: '-0.5px',
     lineHeight: 1.4,
     marginBottom: 8,
   },
@@ -34,15 +32,15 @@ export default makeStyles(theme => ({
     overflow: 'auto',
     position: 'relative',
     isolation: 'isolate',
-    borderTop: '1px solid #e1e7ee',
+    borderTop: '1px solid ' + theme.palette.divider,
     overscrollBehavior: 'contain',
-    scrollbarColor: '#b6c2ce #f3f5f8',
+    scrollbarColor: theme.palette.grey[400] + ' ' + theme.palette.grey[100],
     scrollbarWidth: 'auto',
     '&:focus': { outline: '2px solid ' + theme.palette.primary.main, outlineOffset: -2 },
     '&::-webkit-scrollbar': { width: 10, height: 10 },
-    '&::-webkit-scrollbar-track': { backgroundColor: '#f3f5f8' },
+    '&::-webkit-scrollbar-track': { backgroundColor: theme.palette.grey[100] },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: '#b6c2ce', border: '2px solid #f3f5f8', borderRadius: 8,
+      backgroundColor: theme.palette.grey[400], border: '2px solid ' + theme.palette.grey[100], borderRadius: 8,
     },
   },
   table: {
@@ -50,12 +48,14 @@ export default makeStyles(theme => ({
     borderCollapse: 'separate',
     borderSpacing: 0,
     '& th, & td': { fontFamily: 'inherit' },
+    '& tr > th:not(:first-child), & tr > td:not(:first-child)': {
+      borderRight: '1px solid ' + theme.palette.divider,
+    },
   },
   cell: {
     padding: '16px 16px',
-    borderBottom: '1px solid #e7ecf1',
-    borderRight: '1px solid #edf0f4',
-    backgroundColor: '#fff',
+    borderBottom: '1px solid ' + theme.palette.divider,
+    backgroundColor: theme.palette.background.paper,
     lineHeight: 1.5,
     verticalAlign: 'middle',
   },
@@ -66,25 +66,23 @@ export default makeStyles(theme => ({
     position: 'sticky',
     left: 0,
     zIndex: 1,
-    boxShadow: '2px 0 0 rgba(216, 224, 234, 0.45)',
+    boxShadow: '1px 0 0 ' + theme.palette.divider,
   },
   header: {
     position: 'sticky',
     top: 0,
     zIndex: 2,
-    backgroundColor: '#f4f6f9',
-    fontWeight: 600,
-    letterSpacing: '0.65px',
-    textTransform: 'uppercase',
+    backgroundColor: theme.palette.background.paper,
+    fontWeight: 700,
     paddingTop: 16,
     paddingBottom: 16,
-    boxShadow: '0 1px 0 #dfe5ec',
+    boxShadow: '0 1px 0 ' + theme.palette.divider,
   },
   headerText: {
     display: 'inline', fontFamily: 'inherit',
-    fontWeight: 'inherit', letterSpacing: 'inherit', textTransform: 'inherit',
+    fontWeight: 'inherit',
   },
-  corner: { zIndex: 3, boxShadow: '2px 1px 0 #dfe5ec' },
+  corner: { zIndex: 3, boxShadow: '1px 1px 0 ' + theme.palette.divider },
   label: { fontFamily: 'inherit', fontWeight: 600, lineHeight: 1.5 },
   description: {
     fontFamily: 'inherit', lineHeight: 1.5,
@@ -97,38 +95,38 @@ export default makeStyles(theme => ({
   },
   section: {
     '& > th, & > td': {
-      backgroundColor: '#f3f6fa', paddingTop: 11, paddingBottom: 11,
-      borderBottomColor: '#e2e8f0',
+      backgroundColor: theme.palette.grey[50], paddingTop: 14, paddingBottom: 14,
     },
     '& $label': {
-      letterSpacing: '0.65px',
-      textTransform: 'uppercase', color: theme.palette.text.primary,
+      fontWeight: 700,
     },
   },
   total: {
-    '& > th, & > td': { backgroundColor: '#f7f9fb', fontWeight: 700 },
+    '& > th, & > td': { fontWeight: 700 },
     '& $label': { fontWeight: 700 },
   },
   result: {
-    '& > th, & > td': { backgroundColor: '#f7eef1', fontWeight: 700 },
+    '& > th, & > td': { backgroundColor: theme.palette.grey[50], fontWeight: 700 },
     '& $label': { fontWeight: 700 },
   },
   capacity: {
     '& > th, & > td': {
-      borderTop: '2px solid ' + theme.palette.primary.main, borderBottom: 0,
-      backgroundColor: '#fff', paddingTop: 20, paddingBottom: 20,
+      borderTop: '2px solid ' + theme.palette.divider, borderBottom: 0,
+      backgroundColor: theme.palette.background.paper, paddingTop: 20, paddingBottom: 20,
     },
+    '& $label': { fontWeight: 700 },
   },
   percentage: { fontFamily: 'inherit', marginBottom: 9, fontWeight: 600 },
   // Independent visual classes leave room for a future alert state.
-  positive: { color: '#2f7b61' },
+  // Darker MUI green provides readable contrast against the white surface.
+  positive: { color: green[800] },
   attention: { color: theme.palette.secondary.main },
-  progress: { height: 5, borderRadius: 4, backgroundColor: '#e9edf1' },
-  progressBar: { borderRadius: 4, backgroundColor: '#518e76' },
+  progress: { height: 5, borderRadius: 4, backgroundColor: theme.palette.grey[200] },
+  progressBar: { borderRadius: 4, backgroundColor: green[800] },
   attentionProgressBar: { backgroundColor: theme.palette.secondary.main },
   footer: {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24,
-    padding: '18px 28px', borderTop: '1px solid #dfe5ec',
+    padding: '18px 28px', borderTop: '1px solid ' + theme.palette.divider,
   },
   footnote: {
     fontFamily: 'inherit', lineHeight: 1.7, maxWidth: 770,

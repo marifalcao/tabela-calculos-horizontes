@@ -58,6 +58,8 @@ O Vite transpila TS/TSX para execução e build; não foi adicionada dependênci
 
 O `ThemeProvider` existe somente em `src/App.jsx` e reproduz o tema do sistema legado: primária `#A6193C`, secundária `#E65E04` e fonte `"Lato", Arial, sans-serif`. O componente não cria um tema próprio; ele consome `theme.palette` e `theme.typography`, portanto usará o tema da aplicação ao ser copiado.
 
+A demonstração carrega Lato pelo Google Fonts em `index.html`, sem pacote adicional. Esse carregamento depende de acesso à internet; Arial/sans-serif permanece como fallback. No sistema legado, o componente utiliza a fonte já fornecida pela aplicação.
+
 Os percentuais em estado normal mantêm verde semântico e os zerados usam cinza. `styles.ts` também fornece `attention` e `attentionProgressBar` com `theme.palette.secondary.main` para o futuro estado acima de 35%; nenhuma regra de alerta foi implementada.
 
 Vite é apenas a ferramenta local de desenvolvimento e build. Ao copiar o futuro componente, leve seu código e os arquivos de que ele depende; a configuração do Vite e o ponto de montagem local não são necessários no sistema legado.

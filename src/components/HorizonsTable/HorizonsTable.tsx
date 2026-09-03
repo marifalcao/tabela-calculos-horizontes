@@ -17,7 +17,7 @@ export default function HorizonsTable({ data }: HorizonsTableProps) {
   const rows = buildRows(data);
 
   return (
-    <Paper className={classes.card} elevation={0}>
+    <Paper className={classes.card} elevation={1}>
       <div className={classes.intro}>
         <Typography component="h2" variant="subtitle1" color="textPrimary" className={classes.title}>
           Cálculo dos horizontes
@@ -39,13 +39,13 @@ export default function HorizonsTable({ data }: HorizonsTableProps) {
           <TableHead>
             <TableRow>
               <TableCell scope="col" className={[classes.cell, classes.firstColumn, classes.header, classes.corner].join(' ')}>
-                <Typography component="span" variant="caption" color="textSecondary" className={classes.headerText}>
+                <Typography component="span" variant="caption" color="textPrimary" className={classes.headerText}>
                   Item do fluxo (anual)
                 </Typography>
               </TableCell>
               {data.years.map(year => (
                 <TableCell key={year} scope="col" align="right" className={[classes.cell, classes.header].join(' ')}>
-                  <Typography component="span" variant="caption" color="textSecondary" className={classes.headerText}>
+                  <Typography component="span" variant="caption" color="textPrimary" className={classes.headerText}>
                     Ano {year}
                   </Typography>
                 </TableCell>
@@ -56,7 +56,7 @@ export default function HorizonsTable({ data }: HorizonsTableProps) {
             {rows.map(row => (
               <TableRow key={row.id} className={classes[row.kind]}>
                 <TableCell component="th" scope="row" className={[classes.cell, classes.firstColumn].join(' ')}>
-                  <Typography component="div" variant={row.kind === 'section' ? 'caption' : 'body2'}
+                  <Typography component="div" variant="body2"
                     color="textPrimary" className={classes.label}>
                     {row.label}
                   </Typography>
