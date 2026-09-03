@@ -1,0 +1,65 @@
+# Cálculos Horizontes
+
+Ambiente local para o componente portátil **Cálculo dos horizontes**, destinado a um sistema legado.
+
+## Executar localmente
+
+Use Node.js 22 ou superior e npm.
+
+```sh
+npm ci --legacy-peer-deps
+npm run dev
+```
+
+Abra o endereço local exibido no terminal. Para gerar o build, execute `npm run build`. Para visualizar o build, execute `npm run preview`.
+
+## Compatibilidade obrigatória
+
+- React e React DOM: **16.10.2**.
+- Material-UI Core: **4.5.1**.
+- Material-UI Icons: **4.4.1**.
+- mui-datatables: **2.10.2**.
+- Utilize somente APIs, componentes e propriedades disponíveis nessas versões.
+- Para estilos, utilize APIs do Material-UI 4.5.1, como `makeStyles` de `@material-ui/core/styles`.
+- Não adicione React 17+, MUI 5+, `@mui/material`, DataGrid, Tailwind, styled-components ou outras bibliotecas externas de tabela além de `mui-datatables@2.10.2`.
+
+`mui-datatables@2.10.2` declara peers `@material-ui/core@^3.2.0` e `@material-ui/icons@^3.0.1`, diferentes das versões exigidas neste projeto. A instalação utiliza `--legacy-peer-deps` para preservar as versões do ambiente legado. Essa opção ignora a validação de peers; não garante compatibilidade dessa biblioteca. Ela está instalada, mas não é importada nem utilizada pelo componente, que usa exclusivamente a Table nativa do Material-UI.
+
+`src/App.jsx` contém apenas a demonstração. `src/main.jsx` monta a aplicação usando `ReactDOM.render`. O JSX utiliza a transformação clássica com `React.createElement`, compatível com React 16.10.2.
+
+## Usar o componente no legado
+
+Copie a pasta `src/components/HorizonsTable` para um projeto com suporte a TypeScript/TSX e as versões de React e Material-UI listadas acima. Nenhum provider, fonte externa ou estilo global é necessário para o componente.
+
+```jsx
+import HorizonsTable from './components/HorizonsTable';
+import { mockData } from './components/HorizonsTable/mockData';
+
+<HorizonsTable data={mockData} />
+```
+
+Substitua `mockData` pelos dados reais seguindo `HorizonsData`, definido em `types.ts`:
+
+- `years`: anos únicos na ordem das colunas.
+- `revenue`: faturamento anual, em reais.
+- `costRate`: fração da receita destinada a custos (por exemplo, `0.62`).
+- `operations`: operações com código único, descrição, encargos (`charges`) e principal (`principal`) anuais.
+- `utilization`: percentuais fornecidos pelo chamador (por exemplo, `24.7` representa 24,7%).
+
+Todos os arrays anuais devem conter um número finito por ano, na mesma ordem de `years`; informe `0` nos anos sem valor. A lista de operações pode ser vazia. Os totais, custos, rédito e lucro líquido são derivados em `rows.ts`. A utilização é recebida pronta, sem fórmula financeira inferida ou alerta acima de 35%.
+
+O mock assume faturamento constante de R$ 1.514.400 por ano e custos de 62%; as operações e os percentuais reproduzem os valores solicitados. `formatters.ts` centraliza a formatação pt-BR. `styles.ts` reúne os estilos e as camadas sticky, incluindo classes separadas para percentuais positivos e zerados.
+
+A região da tabela tem rolagem horizontal e vertical, é acessível por Tab e permite navegar com as setas. O título e o rodapé ficam fora da rolagem. A estrutura tabular é preservada em telas pequenas.
+
+O Vite transpila TS/TSX para execução e build; não foi adicionada dependência para checagem estática de tipos.
+
+## Tema da demonstração
+
+O `ThemeProvider` existe somente em `src/App.jsx` e reproduz o tema do sistema legado: primária `#A6193C`, secundária `#E65E04` e fonte `"Lato", Arial, sans-serif`. O componente não cria um tema próprio; ele consome `theme.palette` e `theme.typography`, portanto usará o tema da aplicação ao ser copiado.
+
+Os percentuais em estado normal mantêm verde semântico e os zerados usam cinza. `styles.ts` também fornece `attention` e `attentionProgressBar` com `theme.palette.secondary.main` para o futuro estado acima de 35%; nenhuma regra de alerta foi implementada.
+
+Vite é apenas a ferramenta local de desenvolvimento e build. Ao copiar o futuro componente, leve seu código e os arquivos de que ele depende; a configuração do Vite e o ponto de montagem local não são necessários no sistema legado.
+
+As dependências diretas usam versões exatas e o `package-lock.json` registra as dependências instaladas. O cache do npm fica na pasta local `.npm-cache`, ignorada pelo Git.
