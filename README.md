@@ -44,7 +44,7 @@ Substitua `mockData` pelos dados reais seguindo `HorizonsData`, definido em `typ
 - `revenue`: faturamento anual, em reais.
 - `costRate`: fração da receita destinada a custos (por exemplo, `0.62`).
 - `contributions`: aportes anuais, em reais, somados ao lucro líquido para calcular a capacidade de pagamento.
-- `operations`: operações com código único, descrição, lista de encargos (`charges`, cada um com `name` e valores anuais em `values`) e valores anuais de principal (`principal`). Cada operação possui uma linha de subtotal; o total de encargos soma todos os encargos de todas as operações.
+- `operations`: operações com código único, descrição, lista de encargos (`charges`, cada um com `name` e valores anuais em `values`) e valores anuais de principal (`principal`). A seção de encargos exibe uma linha por operação com a soma anual dos seus encargos, sem detalhar comissão, seguro ou outros tipos. O total de encargos soma todas as operações.
 
 Todos os arrays anuais devem conter um número finito por ano, na mesma ordem de `years`; informe `0` nos anos sem valor. A lista de operações pode ser vazia. Os totais, custos, rédito, lucro líquido, capacidade de pagamento e percentual de utilização são derivados em `rows.ts`. A utilização corresponde a `Total do principal ÷ Capacidade de pagamento × 100`; quando a capacidade de pagamento é zero ou negativa, o resultado exibido é 0%.
 

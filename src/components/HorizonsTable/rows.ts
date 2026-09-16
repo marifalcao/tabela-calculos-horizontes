@@ -24,35 +24,13 @@ export function buildRows(data: HorizonsData): HorizonRow[] {
   const paymentCapacity = netIncome.map(
     (value, index) => value + data.contributions[index],
   );
-  const chargeRows = data.operations.reduce<HorizonRow[]>(
-    (rows, operation, operationIndex) => {
-      rows.push({
-        id: "charges-" + operation.code,
-        label: operation.code,
-        description: operation.description,
-        kind: "chargeGroup",
-        values: [],
-      });
-      rows.push(
-        ...operation.charges.map(
-          (charge, index): HorizonRow => ({
-            id: "charge-" + operation.code + "-" + index,
-            label: charge.name,
-            kind: "charge",
-            values: charge.values,
-          }),
-        ),
-      );
-      rows.push({
-        id: "charges-subtotal-" + operation.code,
-        label: "Total da operação",
-        kind: "chargeSubtotal",
-        values: subtotals[operationIndex],
-      });
-      return rows;
-    },
-    [],
-  );
+  const chargeRows: HorizonRow[] = data.operations.map((operation, index) => ({
+    id: "charges-" + operation.code,
+    label: operation.code,
+    description: operation.description,
+    kind: "charge",
+    values: subtotals[index],
+  }));
   const totalPrincipal = data.years.map((year, index) =>
     data.operations.reduce(
       (sum, operation) => sum + operation.principal[index],

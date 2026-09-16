@@ -72,7 +72,7 @@ export default function HorizonsTable({ data }: HorizonsTableProps) {
           </TableHead>
           <TableBody>
             {rows.map(row => {
-              const isChargesContent = row.kind === 'chargeGroup' || row.kind === 'charge' || row.kind === 'chargeSubtotal';
+              const isChargesContent = row.kind === 'charge';
               const isPrincipalContent = row.kind === 'operation';
               if ((isChargesContent && !expandedSections.charges) ||
                 (isPrincipalContent && !expandedSections.principal)) {
@@ -119,8 +119,6 @@ export default function HorizonsTable({ data }: HorizonsTableProps) {
                 </TableCell>
                 {row.kind === 'section' ? (
                   <TableCell colSpan={data.years.length} className={classes.cell} />
-                ) : row.kind === 'chargeGroup' ? (
-                  data.years.map(year => <TableCell key={year} className={classes.cell} />)
                 ) : row.values.map((value, index) => (
                   <TableCell key={data.years[index]} align="right"
                     className={[classes.cell, classes.money, row.kind === 'capacity' ? classes[getCapacityState(value)] : ''].join(' ')}>

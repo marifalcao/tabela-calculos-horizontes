@@ -27,6 +27,6 @@ export interface HorizonRow {
   id: string;
   label: string;
   description?: string;
-  kind: 'normal' | 'operation' | 'chargeGroup' | 'charge' | 'chargeSubtotal' | 'section' | 'total' | 'result' | 'capacity';
+  kind: 'normal' | 'operation' | 'charge' | 'section' | 'total' | 'result' | 'capacity';
   values: number[];
 }

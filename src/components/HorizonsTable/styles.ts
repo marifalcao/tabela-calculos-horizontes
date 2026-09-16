@@ -124,21 +124,9 @@ export default makeStyles(theme => {
     '& > th': { paddingLeft: 26 },
     '& > th, & > td': { paddingTop: 13, paddingBottom: 13 },
   },
-  chargeGroup: {
-    '& > th': { paddingLeft: 26 },
-    '& > th, & > td': {
-      paddingTop: 16, paddingBottom: 12, backgroundColor: theme.palette.grey[50],
-    },
-  },
   charge: {
-    '& > th': { paddingLeft: 40 },
-    '& > th, & > td': { paddingTop: 12, paddingBottom: 12 },
-    '& $label': { fontWeight: 400 },
-  },
-  chargeSubtotal: {
-    '& > th': { paddingLeft: 40 },
-    '& > th, & > td': { paddingTop: 12, paddingBottom: 12, fontWeight: 600 },
-    '& $label': { fontWeight: 600 },
+    '& > th': { paddingLeft: 26 },
+    '& > th, & > td': { paddingTop: 13, paddingBottom: 13 },
   },
   section: {
     '& > th, & > td': {
