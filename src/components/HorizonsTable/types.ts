@@ -1,7 +1,12 @@
+export interface HorizonCharge {
+  name: string;
+  values: number[];
+}
+
 export interface HorizonOperation {
   code: string;
   description: string;
-  charges: number[];
+  charges: HorizonCharge[];
   principal: number[];
 }
 
@@ -10,9 +15,8 @@ export interface HorizonsData {
   years: number[];
   revenue: number[];
   costRate: number;
+  contributions: number[];
   operations: HorizonOperation[];
-  /** Percentages supplied by the caller; no capacity formula is assumed here. */
-  utilization: number[];
 }
 
 export interface HorizonsTableProps {
@@ -23,6 +27,6 @@ export interface HorizonRow {
   id: string;
   label: string;
   description?: string;
-  kind: 'normal' | 'operation' | 'section' | 'total' | 'result' | 'capacity';
+  kind: 'normal' | 'operation' | 'chargeGroup' | 'charge' | 'chargeSubtotal' | 'section' | 'total' | 'result' | 'capacity';
   values: number[];
 }

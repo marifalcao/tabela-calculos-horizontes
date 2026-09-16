@@ -1,2 +1,2 @@
 export { default } from './HorizonsTable';
-export type { HorizonsTableProps, HorizonsData, HorizonOperation } from './types';
+export type { HorizonsTableProps, HorizonsData, HorizonOperation, HorizonCharge } from './types';

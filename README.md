@@ -43,14 +43,14 @@ Substitua `mockData` pelos dados reais seguindo `HorizonsData`, definido em `typ
 - `years`: anos únicos na ordem das colunas.
 - `revenue`: faturamento anual, em reais.
 - `costRate`: fração da receita destinada a custos (por exemplo, `0.62`).
-- `operations`: operações com código único, descrição, encargos (`charges`) e principal (`principal`) anuais.
-- `utilization`: percentuais fornecidos pelo chamador (por exemplo, `24.7` representa 24,7%).
+- `contributions`: aportes anuais, em reais, somados ao lucro líquido para calcular a capacidade de pagamento.
+- `operations`: operações com código único, descrição, lista de encargos (`charges`, cada um com `name` e valores anuais em `values`) e valores anuais de principal (`principal`). Cada operação possui uma linha de subtotal; o total de encargos soma todos os encargos de todas as operações.
 
-Todos os arrays anuais devem conter um número finito por ano, na mesma ordem de `years`; informe `0` nos anos sem valor. A lista de operações pode ser vazia. Os totais, custos, rédito e lucro líquido são derivados em `rows.ts`. A utilização é recebida pronta, sem fórmula financeira inferida ou alerta acima de 35%.
+Todos os arrays anuais devem conter um número finito por ano, na mesma ordem de `years`; informe `0` nos anos sem valor. A lista de operações pode ser vazia. Os totais, custos, rédito, lucro líquido, capacidade de pagamento e percentual de utilização são derivados em `rows.ts`. A utilização corresponde a `Total do principal ÷ Capacidade de pagamento × 100`; quando a capacidade de pagamento é zero ou negativa, o resultado exibido é 0%.
 
-O mock assume faturamento constante de R$ 1.514.400 por ano e custos de 62%; as operações e os percentuais reproduzem os valores solicitados. `formatters.ts` centraliza a formatação pt-BR. `styles.ts` reúne os estilos e as camadas sticky, incluindo classes separadas para percentuais positivos e zerados.
+O mock assume faturamento constante de R$ 1.514.400,00 por ano e custos de 62%; os demais dados são simulados. `formatters.ts` centraliza a formatação pt-BR com duas casas decimais e vírgula como separador decimal. Valores monetários iguais a zero são exibidos como `—` para reduzir o ruído visual, enquanto os cálculos continuam usando zero. `styles.ts` reúne os estilos e as camadas sticky, incluindo classes para os estados de utilização adequada e inadequada.
 
-A região da tabela tem rolagem horizontal e vertical, é acessível por Tab e permite navegar com as setas. O título e o rodapé ficam fora da rolagem. A estrutura tabular é preservada em telas pequenas.
+A região da tabela tem rolagem horizontal e vertical, é acessível por Tab e permite navegar com as setas. O título e o rodapé ficam fora da rolagem. A altura acompanha a janela até o limite definido e as colunas ficam mais compactas em telas pequenas, preservando a estrutura tabular.
 
 O Vite transpila TS/TSX para execução e build; não foi adicionada dependência para checagem estática de tipos.
 
@@ -60,7 +60,7 @@ O `ThemeProvider` existe somente em `src/App.jsx` e reproduz o tema do sistema l
 
 A demonstração carrega Lato pelo Google Fonts em `index.html`, sem pacote adicional. Esse carregamento depende de acesso à internet; Arial/sans-serif permanece como fallback. No sistema legado, o componente utiliza a fonte já fornecida pela aplicação.
 
-Os percentuais em estado normal mantêm verde semântico e os zerados usam cinza. `styles.ts` também fornece `attention` e `attentionProgressBar` com `theme.palette.secondary.main` para o futuro estado acima de 35%; nenhuma regra de alerta foi implementada.
+A utilização de 0% é classificada como Sem utilização e usa textSecondary. Acima de 0% até 90%, inclusive, é classificada como Adequada e usa verde semântico do Material-UI. Acima de 90%, é classificada como Inadequada e usa theme.palette.error.dark. Texto e barra seguem essas faixas, sem estado intermediário laranja. A classificação é exibida abaixo de cada percentual.
 
 Vite é apenas a ferramenta local de desenvolvimento e build. Ao copiar o futuro componente, leve seu código e os arquivos de que ele depende; a configuração do Vite e o ponto de montagem local não são necessários no sistema legado.
 
