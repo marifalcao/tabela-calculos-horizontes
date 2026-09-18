@@ -65,3 +65,17 @@ A utilização de 0% é classificada como Sem utilização e usa textSecondary. 
 Vite é apenas a ferramenta local de desenvolvimento e build. Ao copiar o futuro componente, leve seu código e os arquivos de que ele depende; a configuração do Vite e o ponto de montagem local não são necessários no sistema legado.
 
 As dependências diretas usam versões exatas e o `package-lock.json` registra as dependências instaladas. O cache do npm fica na pasta local `.npm-cache`, ignorada pelo Git.
+
+## Gráfico de utilização por grupo
+
+`src/components/CapacityUtilizationChart` utiliza Apache ECharts 6.1.0, sem wrapper React, em um Paper com 24 px de espaço abaixo da tabela. Substitui as duas visualizações anteriores e recebe exatamente o mesmo objeto `data` da tabela. Não cria ThemeProvider nem altera suas regras financeiras.
+
+A configuração adapta as séries mapeadas, `type: 'bar'` e `stack: 'total'` do exemplo oficial [bar-stack-normalization](https://echarts.apache.org/examples/en/editor.html?c=bar-stack-normalization). A normalização pelo total foi substituída, em `data.ts`, por soma do principal do grupo no ano / capacidade de pagamento do ano × 100. Há um único eixo percentual, com escala acima de 100% quando necessário. Os totais aparecem acima das colunas, os percentuais dentro dos segmentos quando há espaço e a média em uma referência tracejada. Não há série de linha de utilização total.
+
+A classificação explícita em `demoGroups.ts` segue a ordem de empilhamento: em renegociação (004829-7 e 004815-2, verde), fora de renegociação (004901-3, roxo) e SCR (004930-8, azul). Operações desconhecidas ou duplicadas geram erro para evitar dupla contagem; não se infere classificação por descrição.
+
+A capacidade, o principal total e a utilização são obtidos de `buildRows`. A média reutiliza `getAverageUtilization`, com os percentuais originais, incluindo anos com zero. No cenário atual, os totais são 22,50%, 10,77% e 3,90% nos três primeiros anos, seguidos de sete zeros; a média é 3,72%. Alterações no objeto de dados atualizam o gráfico.
+
+Dados ausentes permanecem indisponíveis, com lacunas e sem média completa. Para capacidade zero ou negativa, a regra já existente em `rows.ts` retorna 0%; o gráfico preserva essa regra sem efetuar divisão inválida e apresenta uma nota quando ela se aplica. Isso não deve ser confundido com a ausência de dados. Antes de alterar essa regra, confirmar seu significado no sistema legado.
+
+Tooltip e tabela acessível apresentam capacidade em reais, principal e contribuição percentual por grupo, identificadores e principal de cada operação, total, média e diferença em pontos percentuais. O detalhamento tabular pode ser aberto pelo teclado. Os componentes usam Typography e os textos desenhados pelo ECharts usam a fonte e as cores do tema. A comparação com a média não atribui inadimplência, inadequação ou responsabilidade ao segmento que cruza a referência.

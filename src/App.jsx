@@ -2,6 +2,8 @@ import React from 'react';
 import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import HorizonsTable from './components/HorizonsTable';
 import { mockData } from './components/HorizonsTable/mockData';
+import CapacityUtilizationChart from './components/CapacityUtilizationChart';
+import { demoGroups } from './components/CapacityUtilizationChart/demoGroups';
 
 const legacyTheme = createMuiTheme({
   palette: {
@@ -38,6 +40,7 @@ function Demo() {
   return (
     <main className={classes.root}>
       <HorizonsTable data={mockData} />
+      <CapacityUtilizationChart data={mockData} operationGroups={demoGroups} />
     </main>
   );
 }
