@@ -1,9 +1,9 @@
 import { Theme } from '@material-ui/core/styles';
-import blue from '@material-ui/core/colors/blue';
+import cyan from '@material-ui/core/colors/cyan';
 import { getContrastRatio } from '@material-ui/core/styles/colorManipulator';
 import { ChartData, GROUPS, percentageText } from './data';
 
-export const getGroupColors = (theme: Theme) => [theme.palette.primary.main, theme.palette.secondary.main, blue[900]];
+export const getGroupColors = (theme: Theme) => [theme.palette.primary.main, theme.palette.secondary.main, cyan[900]];
 export function createChartOptions(data: ChartData, theme: Theme) {
   const groupColors = getGroupColors(theme);
   const peak = Math.max(1, ...data.years.map(year => GROUPS.reduce((sum, group) => sum + (year.groups[group.id].percentage || 0), 0)));

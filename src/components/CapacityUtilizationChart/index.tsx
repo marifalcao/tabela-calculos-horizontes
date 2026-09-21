@@ -384,9 +384,8 @@ export default function CapacityUtilizationChart({
             className={classes.note}
           >
             Média simples dos percentuais anuais, incluindo os anos com
-            utilização zero. Estar acima da média não indica inadimplência ou
-            inadequação. A ordem dos segmentos não atribui responsabilidade pelo
-            excesso.
+            utilização zero. Cada segmento representa a contribuição do grupo
+            para a utilização da capacidade de pagamento.
           </Typography>
           {chartData.average === null && (
             <Typography
