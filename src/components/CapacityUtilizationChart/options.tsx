@@ -1,9 +1,11 @@
 import { Theme } from '@material-ui/core/styles';
-import { blue, teal, purple } from '@material-ui/core/colors';
+import blue from '@material-ui/core/colors/blue';
+import { getContrastRatio } from '@material-ui/core/styles/colorManipulator';
 import { ChartData, GROUPS, percentageText } from './data';
 
-export const GROUP_COLORS = [teal[700], purple[600], blue[800]];
+export const getGroupColors = (theme: Theme) => [theme.palette.primary.main, theme.palette.secondary.main, blue[900]];
 export function createChartOptions(data: ChartData, theme: Theme) {
+  const groupColors = getGroupColors(theme);
   const peak = Math.max(1, ...data.years.map(year => GROUPS.reduce((sum, group) => sum + (year.groups[group.id].percentage || 0), 0)));
   const upper = Math.ceil(peak * 1.2 / 5) * 5;
   // Adapted from https://echarts.apache.org/examples/en/editor.html?c=bar-stack-normalization
@@ -11,9 +13,9 @@ export function createChartOptions(data: ChartData, theme: Theme) {
   // with group principal / annual payment capacity * 100, without normalization.
   const series = GROUPS.map((group, index) => ({
     name: group.label, type: 'bar', stack: 'total', barWidth: '60%', barMaxWidth: 76,
-    itemStyle: { color: GROUP_COLORS[index] },
+    itemStyle: { color: groupColors[index] },
     data: data.years.map(year => year.groups[group.id].percentage),
-    label: { show: true, position: 'inside', fontSize: 12, color: theme.palette.common.white,
+    label: { show: true, position: 'inside', fontSize: 12, color: getContrastRatio(groupColors[index], theme.palette.common.white) >= 4.5 ? theme.palette.common.white : theme.palette.common.black,
       formatter: ({ value }: { value: number | null }) => value !== null && value > 0 && value / upper * 260 >= 18 ? percentageText(value) : '' },
     ...(index === 0 ? {
       markLine: { silent: true, symbol: ['none', 'none'], lineStyle: { type: 'dashed', width: 2, color: theme.palette.text.primary, opacity: 0.4 }, label: { show: false },

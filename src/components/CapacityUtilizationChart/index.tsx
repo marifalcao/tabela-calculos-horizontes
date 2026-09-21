@@ -29,7 +29,7 @@ import {
   percentageText,
   differenceText,
 } from "./data";
-import { createChartOptions, GROUP_COLORS } from "./options";
+import { createChartOptions, getGroupColors } from "./options";
 
 echarts.use([
   BarChart,
@@ -120,6 +120,7 @@ export default function CapacityUtilizationChart({
 }: Props) {
   const classes = useStyles();
   const theme = useTheme();
+  const groupColors = getGroupColors(theme);
   const chartRef = useRef<HTMLDivElement>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const result = useMemo(() => {
@@ -183,16 +184,6 @@ export default function CapacityUtilizationChart({
       >
         Utilização da capacidade de pagamento por ano
       </Typography>
-      <Typography
-        component="p"
-        variant="body2"
-        color="textSecondary"
-        className={classes.note}
-      >
-        Dados demonstrativos da tabela Cálculo dos horizontes. Cada segmento
-        representa o principal do grupo dividido pela capacidade de pagamento do
-        ano.
-      </Typography>
       {result.error && (
         <Typography
           component="p"
@@ -216,7 +207,7 @@ export default function CapacityUtilizationChart({
                 <span
                   aria-hidden="true"
                   className={classes.swatch}
-                  style={{ backgroundColor: GROUP_COLORS[index] }}
+                  style={{ backgroundColor: groupColors[index] }}
                 />
                 <Typography
                   component="span"
@@ -260,6 +251,7 @@ export default function CapacityUtilizationChart({
             }
             value={selected ? selected.year : ""}
             onChange={(event) => setSelectedYear(Number(event.target.value))}
+            style={{ minWidth: 200 }}
           >
             {chartData.years.map((year) => (
               <MenuItem key={year.year} value={year.year}>
@@ -307,10 +299,7 @@ export default function CapacityUtilizationChart({
                   ["Total do principal", moneyText(selected.totalPrincipal)],
                   ["Utilização total", percentageText(selected.total)],
                   ["Média do período", percentageText(chartData.average)],
-                  [
-                    "Diferença para a média",
-                    differenceText(selected.difference),
-                  ],
+                  ["Desvio da média", differenceText(selected.difference)],
                 ].map(([label, value]) => (
                   <div key={label}>
                     <Typography
@@ -338,7 +327,7 @@ export default function CapacityUtilizationChart({
                       <span
                         aria-hidden="true"
                         className={classes.swatch}
-                        style={{ backgroundColor: GROUP_COLORS[index] }}
+                        style={{ backgroundColor: groupColors[index] }}
                       />
                       <Typography
                         component="h4"
@@ -383,24 +372,6 @@ export default function CapacityUtilizationChart({
                         {percentageText(selected.groups[group.id].percentage)}
                       </Typography>
                     </div>
-                    {selected.groups[group.id].operations.map((operation) => (
-                      <div key={operation.code} className={classes.detailRow}>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="textPrimary"
-                        >
-                          {operation.code}
-                        </Typography>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="textPrimary"
-                        >
-                          {moneyText(operation.principal)}
-                        </Typography>
-                      </div>
-                    ))}
                   </div>
                 ))}
               </div>
@@ -442,126 +413,6 @@ export default function CapacityUtilizationChart({
               regra atual da tabela: utilização de 0%, sem efetuar divisão.
             </Typography>
           )}
-          <details className={classes.details}>
-            <summary className={classes.summary}>
-              <Typography component="span" variant="body2" color="textPrimary">
-                Consultar composição financeira e operações em tabela
-              </Typography>
-            </summary>
-            <div
-              className={classes.scroll}
-              tabIndex={0}
-              role="region"
-              aria-label="Composição financeira por ano com rolagem horizontal"
-            >
-              <Table
-                size="small"
-                className={classes.table}
-                aria-label="Composição financeira da utilização por ano"
-              >
-                <TableHead>
-                  <TableRow>
-                    {[
-                      "Ano",
-                      "Capacidade de pagamento",
-                      ...GROUPS.map((group) => group.label),
-                      "Total do principal",
-                      "Utilização total",
-                      "Média do período",
-                      "Diferença da média",
-                    ].map((label, index) => (
-                      <TableCell
-                        key={label}
-                        scope="col"
-                        align={index ? "right" : "left"}
-                      >
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="textPrimary"
-                          className={classes.title}
-                        >
-                          {label}
-                        </Typography>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {chartData.years.map((year) => (
-                    <TableRow key={year.year}>
-                      <TableCell component="th" scope="row">
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="textPrimary"
-                        >
-                          Ano {year.year}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="textPrimary"
-                        >
-                          {moneyText(year.paymentCapacity)}
-                        </Typography>
-                      </TableCell>
-                      {GROUPS.map((group) => (
-                        <TableCell key={group.id} align="right">
-                          <Typography
-                            component="div"
-                            variant="body2"
-                            color="textPrimary"
-                          >
-                            {moneyText(year.groups[group.id].principal)}
-                          </Typography>
-                          <Typography
-                            component="div"
-                            variant="body2"
-                            color="textPrimary"
-                          >
-                            {percentageText(year.groups[group.id].percentage)}
-                          </Typography>
-                          {year.groups[group.id].operations.map((operation) => (
-                            <Typography
-                              key={operation.code}
-                              component="div"
-                              variant="caption"
-                              color="textPrimary"
-                            >
-                              {operation.code}: {moneyText(operation.principal)}
-                            </Typography>
-                          ))}
-                        </TableCell>
-                      ))}
-                      {[
-                        moneyText(year.totalPrincipal),
-                        percentageText(year.total),
-                        percentageText(chartData.average),
-                        differenceText(year.difference),
-                      ].map((value, index) => (
-                        <TableCell key={index} align="right">
-                          <Typography
-                            component="span"
-                            variant="body2"
-                            color={
-                              value === "Indisponível"
-                                ? "textSecondary"
-                                : "textPrimary"
-                            }
-                          >
-                            {value}
-                          </Typography>
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </details>
         </React.Fragment>
       )}
     </Paper>
