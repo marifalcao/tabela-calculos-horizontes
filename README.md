@@ -1,6 +1,6 @@
 # Cálculos Horizontes
 
-Ambiente local para o componente portátil **Cálculo dos horizontes**, destinado a um sistema legado.
+Ambiente local para a tabela **Cálculo dos horizontes** e o gráfico de utilização da capacidade de pagamento por grupo de operações, destinados a um sistema legado. Os dados e a classificação das operações utilizados na demonstração são fictícios; não há integração com endpoints.
 
 ## Executar localmente
 
@@ -19,6 +19,7 @@ Abra o endereço local exibido no terminal. Para gerar o build, execute `npm run
 - Material-UI Core: **4.5.1**.
 - Material-UI Icons: **4.4.1**.
 - mui-datatables: **2.10.2**.
+- Apache ECharts: **6.1.0**, utilizado no gráfico sem wrapper React.
 - Utilize somente APIs, componentes e propriedades disponíveis nessas versões.
 - Para estilos, utilize APIs do Material-UI 4.5.1, como `makeStyles` de `@material-ui/core/styles`.
 - Não adicione React 17+, MUI 5+, `@mui/material`, DataGrid, Tailwind, styled-components ou outras bibliotecas externas de tabela além de `mui-datatables@2.10.2`.
@@ -50,7 +51,21 @@ Todos os arrays anuais devem conter um número finito por ano, na mesma ordem de
 
 O mock assume faturamento constante de R$ 1.514.400,00 por ano e custos de 62%; os demais dados são simulados. `formatters.ts` centraliza a formatação pt-BR com duas casas decimais e vírgula como separador decimal. Valores monetários iguais a zero são exibidos como `—` para reduzir o ruído visual, enquanto os cálculos continuam usando zero. `styles.ts` reúne os estilos e as camadas sticky, incluindo classes para os estados de utilização adequada e inadequada.
 
-A região da tabela tem rolagem horizontal e vertical, é acessível por Tab e permite navegar com as setas. O título e o rodapé ficam fora da rolagem. A altura acompanha a janela até o limite definido e as colunas ficam mais compactas em telas pequenas, preservando a estrutura tabular.
+A região da tabela tem rolagem horizontal e vertical, é acessível por Tab e permite navegar com as setas. O título e o rodapé ficam fora da rolagem. A altura acompanha a janela até o limite definido e as colunas ficam mais compactas em telas pequenas, preservando a estrutura tabular. As seções Encargos por operação e Principal por operação começam recolhidas, mantendo seus totalizadores visíveis. A média da utilização aparece abaixo da tabela.
+
+Os cálculos anuais seguem esta sequência:
+
+| Indicador | Cálculo |
+| --- | --- |
+| Custos | Receita × parâmetro de custos, arredondado para centavos |
+| Rédito | Receitas − custos |
+| Total de encargos | Soma dos encargos de todas as operações |
+| Lucro líquido | Rédito − total de encargos |
+| Capacidade de pagamento | Lucro líquido + aportes |
+| Total do principal | Soma do principal de todas as operações |
+| Utilização da capacidade | Total do principal ÷ capacidade de pagamento × 100 |
+
+A média do período é a média aritmética simples dos percentuais anuais, incluindo zeros, calculada antes do arredondamento de apresentação.
 
 O Vite transpila TS/TSX para execução e build; não foi adicionada dependência para checagem estática de tipos.
 
@@ -62,7 +77,7 @@ A demonstração carrega Lato pelo Google Fonts em `index.html`, sem pacote adic
 
 A utilização de 0% é classificada como Sem utilização e usa textSecondary. Acima de 0% até 90%, inclusive, é classificada como Adequada e usa verde semântico do Material-UI. Acima de 90%, é classificada como Inadequada e usa theme.palette.error.dark. Texto e barra seguem essas faixas, sem estado intermediário laranja. A classificação é exibida abaixo de cada percentual.
 
-Vite é apenas a ferramenta local de desenvolvimento e build. Ao copiar o futuro componente, leve seu código e os arquivos de que ele depende; a configuração do Vite e o ponto de montagem local não são necessários no sistema legado.
+Vite é apenas a ferramenta local de desenvolvimento e build. Ao copiar os componentes, leve seu código e os arquivos de que dependem; a configuração do Vite e o ponto de montagem local não são necessários no sistema legado.
 
 As dependências diretas usam versões exatas e o `package-lock.json` registra as dependências instaladas. O cache do npm fica na pasta local `.npm-cache`, ignorada pelo Git.
 
@@ -72,10 +87,49 @@ As dependências diretas usam versões exatas e o `package-lock.json` registra a
 
 A configuração adapta as séries mapeadas, `type: 'bar'` e `stack: 'total'` do exemplo oficial [bar-stack-normalization](https://echarts.apache.org/examples/en/editor.html?c=bar-stack-normalization). A normalização pelo total foi substituída, em `data.ts`, por soma do principal do grupo no ano / capacidade de pagamento do ano × 100. Há um único eixo percentual, com escala acima de 100% quando necessário. Os totais aparecem acima das colunas, os percentuais dentro dos segmentos quando há espaço e a média em uma referência tracejada. Não há série de linha de utilização total.
 
-A classificação explícita em `demoGroups.ts` segue a ordem de empilhamento: em renegociação (004829-7 e 004815-2, verde), fora de renegociação (004901-3, roxo) e SCR (004930-8, azul). Operações desconhecidas ou duplicadas geram erro para evitar dupla contagem; não se infere classificação por descrição.
+A classificação explícita em `demoGroups.ts` segue a ordem de empilhamento, da base para o topo:
+
+| Grupo | Operações demonstrativas | Cor |
+| --- | --- | --- |
+| Em renegociação | 004829-7 e 004815-2 | `theme.palette.primary.main` (`#A6193C` na demonstração) |
+| Fora de renegociação | 004901-3 | `theme.palette.secondary.main` (`#E65E04` na demonstração) |
+| SCR | 004930-8 | `cyan[900]` do Material-UI |
+
+As cores são compartilhadas pelas barras, legenda e detalhamento. Os rótulos internos usam branco ou preto conforme o contraste com o segmento. A referência tracejada da média tem opacidade de 40%. As cores dos grupos identificam categorias e não representam as faixas de adequação da tabela.
+
+Cada operação deve ser classificada em exatamente um grupo. Códigos duplicados ou operações sem classificação válida geram erro; não se infere classificação pela descrição. Os anos são ordenados cronologicamente no gráfico.
 
 A capacidade, o principal total e a utilização são obtidos de `buildRows`. A média reutiliza `getAverageUtilization`, com os percentuais originais, incluindo anos com zero. No cenário atual, os totais são 22,50%, 10,77% e 3,90% nos três primeiros anos, seguidos de sete zeros; a média é 3,72%. Alterações no objeto de dados atualizam o gráfico.
 
 Dados ausentes permanecem indisponíveis, com lacunas e sem média completa. Para capacidade zero ou negativa, a regra já existente em `rows.ts` retorna 0%; o gráfico preserva essa regra sem efetuar divisão inválida e apresenta uma nota quando ela se aplica. Isso não deve ser confundido com a ausência de dados. Antes de alterar essa regra, confirmar seu significado no sistema legado.
 
-Tooltip e tabela acessível apresentam capacidade em reais, principal e contribuição percentual por grupo, identificadores e principal de cada operação, total, média e diferença em pontos percentuais. O detalhamento tabular pode ser aberto pelo teclado. Os componentes usam Typography e os textos desenhados pelo ECharts usam a fonte e as cores do tema. A comparação com a média não atribui inadimplência, inadequação ou responsabilidade ao segmento que cruza a referência.
+O tooltip está desativado. Clique em uma barra ou use o seletor **Ano para detalhamento**, acessível pelo teclado, para abrir o painel abaixo do gráfico. O seletor também permite consultar anos com utilização zero, sem barra visível. O botão **Fechar detalhes** recolhe o painel.
+
+O painel apresenta capacidade de pagamento e total do principal em reais, utilização total, média do período e desvio da média em pontos percentuais. Para cada grupo, exibe o principal em reais e sua contribuição percentual. Não há listagem individual de operações nem tabela complementar no gráfico. Os componentes usam Typography e os textos desenhados pelo ECharts usam a fonte e as cores do tema.
+
+Cada segmento representa a contribuição do grupo para a utilização da capacidade de pagamento: o cálculo utiliza valores financeiros de principal, não a quantidade de operações. As colunas não são normalizadas para 100%.
+
+### Usar o gráfico no legado
+
+Copie `src/components/CapacityUtilizationChart` junto com `src/components/HorizonsTable`: o gráfico depende dos tipos, cálculos e helper de média da tabela. O projeto de destino também precisa de `echarts@6.1.0` e suporte a TypeScript/TSX.
+
+```jsx
+import CapacityUtilizationChart from './components/CapacityUtilizationChart';
+import { mockData } from './components/HorizonsTable/mockData';
+import { demoGroups } from './components/CapacityUtilizationChart/demoGroups';
+
+<CapacityUtilizationChart data={mockData} operationGroups={demoGroups} />
+```
+
+Substitua os dados demonstrativos e forneça `operationGroups` como um mapa entre o código da operação e um dos valores `renegotiation`, `outsideRenegotiation` ou `scr`. Confirme na integração que as categorias não geram dupla contagem, especialmente para operações SCR. Os dois componentes devem receber os mesmos dados financeiros e consumir o tema existente da aplicação.
+
+### Organização dos arquivos
+
+- `src/App.jsx`: tema e composição da demonstração.
+- `src/components/HorizonsTable/rows.ts`: cálculos e linhas da tabela.
+- `src/components/HorizonsTable/capacity.ts`: média e classificação da utilização.
+- `src/components/HorizonsTable/mockData.ts`: dados financeiros demonstrativos.
+- `src/components/CapacityUtilizationChart/index.tsx`: ciclo de vida do ECharts, legenda, seleção de ano e painel de detalhes.
+- `src/components/CapacityUtilizationChart/data.ts`: validação, agrupamento financeiro e formatação dos dados do gráfico.
+- `src/components/CapacityUtilizationChart/options.tsx`: séries empilhadas, cores, rótulos, eixos e referência da média.
+- `src/components/CapacityUtilizationChart/demoGroups.ts`: classificação demonstrativa das operações.
