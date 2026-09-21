@@ -253,7 +253,7 @@ export default function CapacityUtilizationChart({
             onChange={(event) => setSelectedYear(Number(event.target.value))}
             style={{ minWidth: 200 }}
           >
-            {chartData.years.map((year) => (
+            {chartData.years.filter((year) => year.totalPrincipal !== null && year.totalPrincipal > 0).map((year) => (
               <MenuItem key={year.year} value={year.year}>
                 <Typography
                   component="span"
@@ -383,9 +383,9 @@ export default function CapacityUtilizationChart({
             color="textSecondary"
             className={classes.note}
           >
-            Média simples dos percentuais anuais, incluindo os anos com
-            utilização zero. Cada segmento representa a contribuição do grupo
-            para a utilização da capacidade de pagamento.
+            Média simples dos percentuais dos períodos com endividamento. Cada
+            segmento representa a contribuição do grupo para a utilização da
+            capacidade de pagamento.
           </Typography>
           {chartData.average === null && (
             <Typography

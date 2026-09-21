@@ -44,7 +44,12 @@ export function prepareChartData(data: HorizonsData, classification: OperationGr
     const total = totalPrincipal !== null && paymentCapacity !== null && finite(utilization[index]) ? utilization[index] : null;
     return { year, paymentCapacity, totalPrincipal, groups, total, difference: null };
   }).sort((a, b) => a.year - b.year);
-  const average = years.every(year => year.total !== null) ? getAverageUtilization(years.map(year => year.total!)) : null;
+  const average = years.every(year => year.total !== null)
+    ? getAverageUtilization(
+        years.map(year => year.total!),
+        years.map(year => year.totalPrincipal !== null && year.totalPrincipal > 0),
+      )
+    : null;
   return { average, years: years.map(year => ({ ...year, difference: year.total !== null && average !== null ? year.total - average : null })) };
 }
 

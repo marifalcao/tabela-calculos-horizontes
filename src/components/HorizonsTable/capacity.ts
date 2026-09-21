@@ -1,6 +1,10 @@
-export function getAverageUtilization(values: number[]): number | null {
-  if (values.length === 0) return null;
-  return values.reduce((sum, value) => sum + value, 0) / values.length;
+export function getAverageUtilization(
+  values: number[],
+  include: boolean[] = values.map(() => true),
+): number | null {
+  const included = values.filter((_, index) => include[index]);
+  if (included.length === 0) return null;
+  return included.reduce((sum, value) => sum + value, 0) / included.length;
 }
 
 export function getCapacityState(value: number): 'error' | 'positive' | 'zero' {

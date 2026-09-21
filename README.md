@@ -65,7 +65,7 @@ Os cálculos anuais seguem esta sequência:
 | Total do principal | Soma do principal de todas as operações |
 | Utilização da capacidade | Total do principal ÷ capacidade de pagamento × 100 |
 
-A média do período é a média aritmética simples dos percentuais anuais, incluindo zeros, calculada antes do arredondamento de apresentação.
+A média do período é a média aritmética simples dos percentuais dos períodos com endividamento (principal total maior que zero), calculada antes do arredondamento de apresentação. Períodos sem principal permanecem no gráfico e não entram nessa média.
 
 O Vite transpila TS/TSX para execução e build; não foi adicionada dependência para checagem estática de tipos.
 
@@ -99,7 +99,7 @@ As cores são compartilhadas pelas barras, legenda e detalhamento. Os rótulos i
 
 Cada operação deve ser classificada em exatamente um grupo. Códigos duplicados ou operações sem classificação válida geram erro; não se infere classificação pela descrição. Os anos são ordenados cronologicamente no gráfico.
 
-A capacidade, o principal total e a utilização são obtidos de `buildRows`. A média reutiliza `getAverageUtilization`, com os percentuais originais, incluindo anos com zero. No cenário atual, os totais são 22,50%, 10,77% e 3,90% nos três primeiros anos, seguidos de sete zeros; a média é 3,72%. Alterações no objeto de dados atualizam o gráfico.
+A capacidade, o principal total e a utilização são obtidos de `buildRows`. A média reutiliza `getAverageUtilization` e considera apenas os anos cujo principal total é maior que zero. No cenário atual, os totais são 22,50%, 10,77% e 3,90% nos três primeiros anos, seguidos de sete zeros; a média dos três anos com endividamento é 12,39%. Alterações no objeto de dados atualizam o gráfico.
 
 Dados ausentes permanecem indisponíveis, com lacunas e sem média completa. Para capacidade zero ou negativa, a regra já existente em `rows.ts` retorna 0%; o gráfico preserva essa regra sem efetuar divisão inválida e apresenta uma nota quando ela se aplica. Isso não deve ser confundido com a ausência de dados. Antes de alterar essa regra, confirmar seu significado no sistema legado.
 

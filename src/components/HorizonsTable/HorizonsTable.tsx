@@ -20,7 +20,11 @@ export default function HorizonsTable({ data }: HorizonsTableProps) {
   const classes = useStyles();
   const rows = buildRows(data);
   const capacityRow = rows.find(row => row.id === 'capacity');
-  const averageUtilization = getAverageUtilization(capacityRow ? capacityRow.values : []);
+  const principalRow = rows.find(row => row.id === 'principal-total');
+  const averageUtilization = getAverageUtilization(
+    capacityRow ? capacityRow.values : [],
+    principalRow ? principalRow.values.map(value => value > 0) : [],
+  );
   const [expandedSections, setExpandedSections] = React.useState({
     charges: false,
     principal: false,
@@ -162,7 +166,7 @@ export default function HorizonsTable({ data }: HorizonsTableProps) {
               Média da utilização da capacidade de pagamento
             </Typography>
             <Typography component="div" variant="caption" color="textSecondary">
-              Média dos percentuais dos {data.years.length} anos, incluindo anos com 0%.
+              Média dos percentuais dos períodos com endividamento.
             </Typography>
           </div>
           <div className={averageUtilization === null ? undefined : classes[getCapacityState(averageUtilization)]}>
